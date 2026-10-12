@@ -23,9 +23,7 @@ from .oauth import DEFAULT_ISSUER, PulsHealthOAuth
 
 _LOGGER = logging.getLogger(__name__)
 
-TOKEN = selector.TextSelector(
-    selector.TextSelectorConfig(type=selector.TextSelectorType.PASSWORD)
-)
+TOKEN = selector.TextSelector(selector.TextSelectorConfig(type=selector.TextSelectorType.PASSWORD))
 
 
 class PulsHealthConfigFlow(AbstractOAuth2FlowHandler, domain=DOMAIN):
@@ -41,9 +39,7 @@ class PulsHealthConfigFlow(AbstractOAuth2FlowHandler, domain=DOMAIN):
     async def async_step_user(self, user_input=None):
         if user_input and CONF_ACCESS_TOKEN in user_input:
             return await self.async_step_self_hosted(user_input)
-        return self.async_show_menu(
-            step_id="user", menu_options=["hosted", "self_hosted"]
-        )
+        return self.async_show_menu(step_id="user", menu_options=["hosted", "self_hosted"])
 
     async def async_step_hosted(self, user_input=None):
         errors = {}
@@ -73,9 +69,7 @@ class PulsHealthConfigFlow(AbstractOAuth2FlowHandler, domain=DOMAIN):
                     self._client_id = registration["client_id"]
                     if not isinstance(self._client_id, str) or not self._client_id:
                         raise PulsHealthError("Invalid client registration")
-                self.flow_impl = PulsHealthOAuth(
-                    self.hass, self._issuer, self._client_id
-                )
+                self.flow_impl = PulsHealthOAuth(self.hass, self._issuer, self._client_id)
                 return await self.async_step_auth()
             except ValueError:
                 errors["base"] = "invalid_input"
@@ -118,10 +112,7 @@ class PulsHealthConfigFlow(AbstractOAuth2FlowHandler, domain=DOMAIN):
         }
         if self.source == config_entries.SOURCE_REAUTH:
             entry = self._get_reauth_entry()
-            if (
-                entry.data[CONF_USER_ID] != client.user_id
-                or entry.data[CONF_URL] != client.url
-            ):
+            if entry.data[CONF_USER_ID] != client.user_id or entry.data[CONF_URL] != client.url:
                 return self.async_abort(reason="wrong_account")
             return self.async_update_reload_and_abort(entry, data_updates=updates)
         self._abort_if_unique_id_configured()
@@ -186,9 +177,7 @@ class PulsHealthConfigFlow(AbstractOAuth2FlowHandler, domain=DOMAIN):
                     entry.data[CONF_USER_ID],
                 )
                 await client.account()
-                return self.async_update_reload_and_abort(
-                    entry, data_updates=user_input
-                )
+                return self.async_update_reload_and_abort(entry, data_updates=user_input)
             except InvalidAuth:
                 errors["base"] = "invalid_auth"
             except (PulsHealthError, ValueError, KeyError, TypeError):
@@ -217,9 +206,7 @@ class PulsHealthOptionsFlow(config_entries.OptionsFlow):
                 {
                     vol.Required(
                         "scan_interval",
-                        default=self.config_entry.options.get(
-                            "scan_interval", DEFAULT_INTERVAL
-                        ),
+                        default=self.config_entry.options.get("scan_interval", DEFAULT_INTERVAL),
                     ): vol.All(vol.Coerce(int), vol.Range(min=60, max=3600)),
                 }
             ),

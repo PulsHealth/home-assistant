@@ -87,9 +87,7 @@ class PulsHealthClient:
                 if response.status == 403:
                     raise PulsHealthError("Account not allowed by this API deployment")
                 if response.status != 200:
-                    raise PulsHealthError(
-                        f"Product API returned HTTP {response.status}"
-                    )
+                    raise PulsHealthError(f"Product API returned HTTP {response.status}")
                 data = await response.json()
                 if not isinstance(data, dict):
                     raise PulsHealthError("Invalid product API response")
@@ -141,9 +139,7 @@ class PulsHealthClient:
             end=window["end"],
         )
         workouts = await self.get("/v1/workouts", limit=1)
-        return project_snapshot(
-            today.isoformat(), user, metrics, rings, sleep, workouts
-        )
+        return project_snapshot(today.isoformat(), user, metrics, rings, sleep, workouts)
 
 
 def project_snapshot(
@@ -154,9 +150,7 @@ def project_snapshot(
     for row in metrics["metrics"]:
         key = DAILY_TYPES.get(row["identifier"])
         if key:
-            values[key] = next(
-                (day["value"] for day in row["days"] if day["date"] == today), None
-            )
+            values[key] = next((day["value"] for day in row["days"] if day["date"] == today), None)
     ring = next((day for day in rings["days"] if day["date"] == today), {})
     for field, key in (
         ("moveKcal", "move_energy"),
@@ -201,7 +195,5 @@ def project_snapshot(
         "date": today,
         "time_zone": user["timeZone"],
         "sleep_date": night.get("date"),
-        "workout": {
-            key: workout.get(key) for key in ("uuid", "activityType", "start", "end")
-        },
+        "workout": {key: workout.get(key) for key in ("uuid", "activityType", "start", "end")},
     }

@@ -16,9 +16,7 @@ from .entity import PulsHealthEntity
 PARALLEL_UPDATES = 0
 
 
-def description(
-    key, name, unit=None, device_class=None, state_class=None, category=None
-):
+def description(key, name, unit=None, device_class=None, state_class=None, category=None):
     return SensorEntityDescription(
         key=key,
         name=name,
@@ -65,9 +63,7 @@ SENSORS = (
         SensorDeviceClass.DURATION,
         SensorStateClass.TOTAL,
     ),
-    description(
-        "exercise_goal", "Exercise goal", UnitOfTime.MINUTES, SensorDeviceClass.DURATION
-    ),
+    description("exercise_goal", "Exercise goal", UnitOfTime.MINUTES, SensorDeviceClass.DURATION),
     description(
         "stand",
         "Stand hours today",
@@ -75,9 +71,7 @@ SENSORS = (
         SensorDeviceClass.DURATION,
         SensorStateClass.TOTAL,
     ),
-    description(
-        "stand_goal", "Stand goal", UnitOfTime.HOURS, SensorDeviceClass.DURATION
-    ),
+    description("stand_goal", "Stand goal", UnitOfTime.HOURS, SensorDeviceClass.DURATION),
     description(
         "move_time",
         "Move time today",
@@ -98,9 +92,7 @@ SENSORS = (
         SensorDeviceClass.DURATION,
         SensorStateClass.MEASUREMENT,
     ),
-    description(
-        "last_workout", "Last workout", device_class=SensorDeviceClass.TIMESTAMP
-    ),
+    description("last_workout", "Last workout", device_class=SensorDeviceClass.TIMESTAMP),
     description(
         "workout_duration",
         "Last workout duration",
@@ -129,9 +121,7 @@ SENSORS = (
 
 
 async def async_setup_entry(hass, entry, async_add_entities):
-    async_add_entities(
-        PulsHealthSensor(entry.runtime_data, entry, desc) for desc in SENSORS
-    )
+    async_add_entities(PulsHealthSensor(entry.runtime_data, entry, desc) for desc in SENSORS)
 
 
 class PulsHealthSensor(PulsHealthEntity, SensorEntity):

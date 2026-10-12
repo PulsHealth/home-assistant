@@ -1,0 +1,35 @@
+name: Release integration
+on:
+  release:
+    types: [published]
+permissions:
+  contents: read
+jobs:
+  test:
+    uses: ./.github/workflows/ci.yml
+  package:
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Verify version and create archive
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          python3 - <<'PYCODE'
+          import json, os, pathlib, zipfile
+          root = pathlib.Path("custom_components/pulshealth")
+          version = json.loads((root / "manifest.json").read_text())["version"]
+          assert os.environ["RELEASE_TAG"] == "v" + version, "Release tag must match manifest version"
+          with zipfile.ZipFile("pulshealth.zip", "w", zipfile.ZIP_DEFLATED) as archive:
+              for path in sorted(root.rglob("*")):
+                  if path.is_file() and "__pycache__" not in path.parts:
+                      archive.write(path, path.relative_to(root))
+          PYCODE
+      - name: Upload integration archive
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: gh release upload "$RELEASE_TAG" pulshealth.zip

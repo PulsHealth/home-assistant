@@ -15,9 +15,7 @@ PLATFORMS = [Platform.SENSOR, Platform.BINARY_SENSOR]
 async def async_setup_entry(hass, entry):
     oauth_session = None
     if "token" in entry.data:
-        implementation = PulsHealthOAuth(
-            hass, entry.data["issuer"], entry.data["client_id"]
-        )
+        implementation = PulsHealthOAuth(hass, entry.data["issuer"], entry.data["client_id"])
         oauth_session = OAuth2Session(hass, entry, implementation)
     client = PulsHealthClient(
         async_get_clientsession(hass),

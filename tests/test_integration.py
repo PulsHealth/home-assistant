@@ -3,15 +3,16 @@
 from unittest.mock import AsyncMock, patch
 
 import pytest
-from custom_components.pulshealth.api import InvalidAuth, PulsHealthError
-from custom_components.pulshealth.const import DOMAIN
-from custom_components.pulshealth.coordinator import PulsHealthCoordinator
 from homeassistant.config_entries import SOURCE_REAUTH, SOURCE_USER
 from homeassistant.data_entry_flow import FlowResultType
 from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers.update_coordinator import UpdateFailed
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 from test_api import ACCOUNT, BASE, USER, snapshot
+
+from custom_components.pulshealth.api import InvalidAuth, PulsHealthError
+from custom_components.pulshealth.const import DOMAIN
+from custom_components.pulshealth.coordinator import PulsHealthCoordinator
 
 DATA = {"name": "Fitness", "url": BASE, "access_token": "test-token", "user_id": USER}
 

@@ -21,9 +21,7 @@ class PulsHealthCoordinator(DataUpdateCoordinator):
             _LOGGER,
             name=DOMAIN,
             config_entry=entry,
-            update_interval=timedelta(
-                seconds=entry.options.get("scan_interval", DEFAULT_INTERVAL)
-            ),
+            update_interval=timedelta(seconds=entry.options.get("scan_interval", DEFAULT_INTERVAL)),
             always_update=False,
         )
         self.options = dict(entry.options)

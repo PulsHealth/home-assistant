@@ -8,9 +8,7 @@ PARALLEL_UPDATES = 0
 
 
 async def async_setup_entry(hass, entry, async_add_entities):
-    async_add_entities(
-        [PulsHealthRingsClosed(entry.runtime_data, entry, "rings_closed")]
-    )
+    async_add_entities([PulsHealthRingsClosed(entry.runtime_data, entry, "rings_closed")])
 
 
 class PulsHealthRingsClosed(PulsHealthEntity, BinarySensorEntity):

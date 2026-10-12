@@ -7,7 +7,7 @@ product API; it needs no changes to the iPhone app, database, or sync protocol.
 The integration bundles the same blue PulsHealth mark used by the website and
 iPhone app. Home Assistant serves the included `brand/icon.png` (256 px) and
 `brand/icon@2x.png` (512 px) locally, with logo and dark-mode fallbacks. The
-512 px image is copied from `site/public/logo.png`; resize that asset for the
+512 px image is copied from the main PulsHealth repository’s `site/public/logo.png`; resize that asset for the
 256 px image when updating the shared branding.
 
 ## What you can do
@@ -77,14 +77,13 @@ export, routes, raw samples, or account administration endpoint is exposed.
 ### HACS custom repository
 
 The repository has the standard `custom_components/pulshealth` layout.
-In HACS, add `PulsHealth/pulshealth` as a custom repository of type
+In HACS, add `PulsHealth/home-assistant` as a custom repository of type
 **Integration**, then download PulsHealth and restart Home Assistant.
-Choose **main** as the download version: older PulsHealth app/server release tags
-predate this component. HACS default-store inclusion is not claimed.
+Choose the latest integration release (or **main** for development). HACS default-store inclusion is not claimed.
 
 ### Manual
 
-Copy the repository's [`custom_components/pulshealth`](../../custom_components/pulshealth)
+Copy the repository's [`custom_components/pulshealth`](custom_components/pulshealth)
 folder to `<HA config>/custom_components/pulshealth`, then restart Home Assistant.
 Do not copy the entire repository or install the test dependencies into HA.
 
@@ -201,13 +200,40 @@ From the repository root with Python 3.14:
 
 ```sh
 python -m venv .venv-ha
-.venv-ha/bin/pip install -r integrations/homeassistant/requirements-test.txt
-.venv-ha/bin/ruff check custom_components/pulshealth integrations/homeassistant
-.venv-ha/bin/ruff format --check custom_components/pulshealth integrations/homeassistant
-.venv-ha/bin/pytest -q integrations/homeassistant/tests
+.venv-ha/bin/pip install -r requirements-test.txt
+.venv-ha/bin/ruff check custom_components tests
+.venv-ha/bin/ruff format --check custom_components tests
+.venv-ha/bin/pytest -q tests
 ```
 
 Tests run real Home Assistant config flows, entity platforms, coordinator outage
 recovery, reauthentication, options and unload. Local HTTP fixtures verify bearer
 scoping, redirect rejection, API response shapes, default-account pinning and DST.
 They never connect to a real health database or contain personal health records.
+
+## Moving from the PulsHealth monorepo
+
+This is now the canonical integration repository. Existing manual installations
+continue working: the `pulshealth` domain, config entries, credentials, unique
+IDs and entity IDs are unchanged. Replace the component files in place and
+restart Home Assistant; do not delete your integration entries or re-pair.
+
+For HACS installations, back up your HA configuration, add
+`PulsHealth/home-assistant` as an Integration custom repository and select this
+repository for future downloads. If HACS reports that the same domain is already
+managed, remove the old repository from HACS first, then immediately install
+from this repository before restarting HA. Keep the PulsHealth entry under
+Devices & services. Check your entities after restart. This repository move
+does not alter or erase recorder history.
+
+## Source history and releases
+
+Extracted from [PulsHealth/pulshealth](https://github.com/PulsHealth/pulshealth)
+at `951d407e4db25e1f62328fd4b58618664314d9dd`, retaining the component and test
+history, original authors and commit sign-offs. Filtered commit IDs differ
+from the monorepo. The API/OAuth server remains in that repository.
+
+Use signed-off commits and PRs. CI tests real Home Assistant with synthetic
+fixtures and checks package metadata. For a release, bump `manifest.json` in
+a passing PR, merge it, then create a matching `v<version>` GitHub release.
+The release workflow validates the version and packages `pulshealth.zip`.
